@@ -23,7 +23,7 @@ class TrulyLazyPredictor:
 
     def _load_model_when_needed(self):
         if not self.model_loaded:
-            print("🔄 Loading model for first prediction...")
+            print("🔀 Loading model for first prediction...")
 
             import tensorflow_hub as hub
             from tensorflow.keras import layers
@@ -36,12 +36,12 @@ class TrulyLazyPredictor:
 
                 def call(self, inputs):
                     if not self._use_loaded:
-                        print("📡 Loading Universal Sentence Encoder...")
+                        print("📱 Loading Universal Sentence Encoder...")
                         print("⏳ Downloading Universal Sentence Encoder (this might take a while)...")
                         self.use = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
                         self._use_loaded = True
                         print("✅ Universal Sentence Encoder loaded!")
-                    print("📥 Running USE embedding...")
+                    print("📅 Running USE embedding...")
                     return self.use(inputs)
 
             self.model = tf.keras.models.load_model(
@@ -93,7 +93,6 @@ class TrulyLazyPredictor:
     def predict_from_url(self, url: str) -> Dict:
         try:
             self._load_model_when_needed()
-
             content = self.fetch_content(url)
             sentences = simple_sent_tokenize(content)[:100]  # Limit for speed
 
@@ -124,7 +123,8 @@ class TrulyLazyPredictor:
                 'url': url,
                 'success': True,
                 'structured_sections': section_map,
-                'total_sentences': len(sentences)
+                'total_sentences': len(sentences),
+                'sentences': sentences
             }
 
         except Exception as e:
@@ -141,7 +141,7 @@ class TrulyLazyPredictor:
             print("🎯 STRUCTURED SENTENCE CLASSIFICATION")
             print("=" * 70)
             print(f"🔗 URL: {result['url']}")
-            print(f"✂️ Total Sentences: {result['total_sentences']}")
+            print(f"✂ Total Sentences: {result['total_sentences']}")
             print("\n🗂️ Section-wise Output:")
 
             for section, sentences in result['structured_sections'].items():
@@ -154,6 +154,11 @@ class TrulyLazyPredictor:
             print("=" * 70)
             print(f"🔗 URL: {result['url']}")
             print(f"💥 Error: {result['error']}")
+
+
+def predict_sentences_from_url(url: str):
+    predictor = TrulyLazyPredictor(config.MODEL_PATH)
+    return predictor.predict_from_url(url)
 
 
 def main():

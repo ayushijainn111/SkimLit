@@ -1,20 +1,16 @@
-from url_predictor import URLModelPredictor
+from url_predictor import TrulyLazyPredictor
 import config
 
 def main():
-    # Initialize predictor
-    predictor = URLModelPredictor(config.MODEL_PATH)
+    predictor = TrulyLazyPredictor(config.MODEL_PATH)
     
-    # Test with a single URL
     url = input("Enter URL to analyze: ")
     result = predictor.predict_from_url(url)
     
-    if 'error' not in result:
-        class_name = config.CLASS_LABELS.get(result['predicted_class'], 'Unknown')
+    if result.get("success", False):
         print(f"\nResults for: {result['url']}")
-        print(f"Predicted Class: {class_name} (ID: {result['predicted_class']})")
-        print(f"Confidence: {result['confidence']:.4f}")
-        print(f"Content Length: {result['content_length']} characters")
+        print(f"Total Sentences: {result['total_sentences']}")
+        print(f"Sections Found: {list(result['structured_sections'].keys())}")
     else:
         print(f"Error: {result['error']}")
 

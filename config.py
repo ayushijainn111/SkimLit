@@ -1,5 +1,5 @@
 # Model configuration
-MODEL_PATH = "models/model5new.keras"
+MODEL_PATH = "models/model5python3.10.keras"
 MAX_CHARS = 1000
 MAX_LINE_NUMBERS = 15
 MAX_TOTAL_LINES = 20
